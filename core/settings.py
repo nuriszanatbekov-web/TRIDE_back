@@ -91,6 +91,8 @@ USE_TZ = True
 # Static and Media files
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# --- МЕДИА ЖӨНДӨӨЛӨРҮ (Сүрөт жана Видеолор үчүн) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -125,7 +127,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# ===== SWAGGER (Бириктирилген жана оңдолгон) =====
+# ===== SWAGGER =====
 SPECTACULAR_SETTINGS = {
     'TITLE': 'TRIDE API',
     'DESCRIPTION': 'TRIDE - велосипед тренировка аппликациясынын REST API',
@@ -133,7 +135,6 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
 
-    # Swagger интерфейсин баарына ачуу (403 катасын оңдойт)
     'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
 
     'SWAGGER_UI_SETTINGS': {
