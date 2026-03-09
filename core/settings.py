@@ -8,17 +8,10 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-for-render')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-change-in-production')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.getenv('DATABASE_URL'),
-#         conn_max_age=600,
-#         conn_health_checks=True,
-#     )
-# }
 
 DATABASES = {
     'default': {
@@ -27,8 +20,9 @@ DATABASES = {
     }
 }
 
+
 INSTALLED_APPS = [
-    'jazzmin',
+   # 'jazzmin',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,7 +38,10 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'django_filters',
 
+
+    'users',
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -79,7 +76,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -87,10 +83,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -100,6 +98,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+
+# ===== REST FRAMEWORK =====
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -116,21 +117,23 @@ REST_FRAMEWORK = {
 }
 
 
-
+# ===== JWT =====
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(
-        days=int(os.getenv('JWT_ACCESS_TOKEN_LIFETIME_DAYS', 36500))
+        days=int(os.getenv('JWT_ACCESS_TOKEN_LIFETIME_DAYS', 1))
     ),
     'REFRESH_TOKEN_LIFETIME': timedelta(
-        days=int(os.getenv('JWT_REFRESH_TOKEN_LIFETIME_DAYS', 36500))
+        days=int(os.getenv('JWT_REFRESH_TOKEN_LIFETIME_DAYS', 30))
     ),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 
-
+# ===== SWAGGER =====
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'BAITECH SWAGGER API',
-    'DESCRIPTION': 'REST API',
+    'TITLE': 'TRIDE API',
+    'DESCRIPTION': 'TRIDE - велосипед тренировка аппликациясынын REST API',
     'VERSION': '1.0.0',
 
     'COMPONENT_SPLIT_REQUEST': True,
@@ -160,8 +163,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-
-
+# ===== CORS =====
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -176,13 +178,19 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-AUTH_USER_MODEL = 'api.CustomUser'
-
 CORS_ALLOW_CREDENTIALS = True
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# ===== EMAIL (для отправки кода подтверждения) =====
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'TRIDE <noreply@tride.com>')
+
 
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
-
-CART_SESSION_ID = 'cart'
-
-
