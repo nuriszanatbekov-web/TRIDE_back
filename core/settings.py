@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,6 +22,9 @@ DATABASES = {
 
 INSTALLED_APPS = [
    # 'jazzmin',
+# Application definition
+INSTALLED_APPS = [
+    'jazzmin',  # Admin панель үчүн
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,7 +33,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Үчүнчү тараптын китепканалары
     'rest_framework',
+    'drf_yasg',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
@@ -40,12 +44,13 @@ INSTALLED_APPS = [
 
 
     'users',
+    # Сиздин колдонмолор
+    'schedule',
 ]
 
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-
+    'corsheaders.middleware.CorsMiddleware',  # Башында болушу шарт
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,7 +80,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -84,15 +97,18 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Internationalization
 LANGUAGE_CODE = 'ru-ru'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Bishkek'
 USE_I18N = True
 USE_TZ = True
 
 
+# Static and Media files
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# --- МЕДИА ЖӨНДӨӨЛӨРҮ (Сүрөт жана Видеолор үчүн) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -102,6 +118,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ===== REST FRAMEWORK =====
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
@@ -111,7 +128,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 }
@@ -130,14 +146,18 @@ SIMPLE_JWT = {
 }
 
 
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
 # ===== SWAGGER =====
 SPECTACULAR_SETTINGS = {
     'TITLE': 'TRIDE API',
     'DESCRIPTION': 'TRIDE - велосипед тренировка аппликациясынын REST API',
     'VERSION': '1.0.0',
-
-    'COMPONENT_SPLIT_REQUEST': True,
     'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
 
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
@@ -153,13 +173,18 @@ SPECTACULAR_SETTINGS = {
 
     'SECURITY': [
         {
-            'bearerAuth': {
-                'type': 'http',
-                'scheme': 'bearer',
-                'bearerFormat': 'JWT',
-            }
+            'bearerAuth': []
         }
     ],
+    'APPEND_COMPONENTS': {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
 }
 
 
@@ -168,7 +193,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
-
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     "accept",
     "authorization",
@@ -191,6 +216,15 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'TRIDE <noreply@tride.com>')
 
+
+# ===== EMAIL =====
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'TRIDE <noreply@tride.com>')
 
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
