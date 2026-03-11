@@ -11,6 +11,17 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-change-in-pro
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+INSTALLED_APPS = [
+   # 'jazzmin',
 # Application definition
 INSTALLED_APPS = [
     'jazzmin',  # Admin панель үчүн
@@ -31,9 +42,12 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'django_filters',
 
+
+    'users',
     # Сиздин колдонмолор
     'schedule',
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Башында болушу шарт
@@ -82,11 +96,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+
 # Internationalization
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Bishkek'
 USE_I18N = True
 USE_TZ = True
+
 
 # Static and Media files
 STATIC_URL = 'static/'
@@ -97,6 +113,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 # ===== REST FRAMEWORK =====
 REST_FRAMEWORK = {
@@ -114,6 +132,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
+
 # ===== JWT =====
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(
@@ -124,6 +143,9 @@ SIMPLE_JWT = {
     ),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+}
+
+
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
@@ -165,6 +187,7 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
+
 # ===== CORS =====
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -179,6 +202,20 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# ===== EMAIL (для отправки кода подтверждения) =====
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'TRIDE <noreply@tride.com>')
+
 
 # ===== EMAIL =====
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
