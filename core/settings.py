@@ -3,29 +3,19 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
+# .env файлынан өзгөрмөлөрдү жүктөө
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# --- КООПСУЗДУК ЖӨНДӨӨЛӨРҮ ---
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-change-in-production')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
+# --- ТИРКЕМЕЛЕР (INSTALLED APPS) ---
 INSTALLED_APPS = [
-   # 'jazzmin',
-# Application definition
-INSTALLED_APPS = [
-    'jazzmin',  # Admin панель үчүн
-
+    'jazzmin',  # Admin панель үчүн (башкалардан жогору болушу шарт)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -35,20 +25,18 @@ INSTALLED_APPS = [
 
     # Үчүнчү тараптын китепканалары
     'rest_framework',
-    'drf_yasg',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'drf_spectacular',
     'django_filters',
 
-
-    'users',
     # Сиздин колдонмолор
+    'users',
     'schedule',
 ]
 
-
+# --- ОРТОНЧУ ПРОГРАММАЛАР (MIDDLEWARE) ---
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Башында болушу шарт
     'django.middleware.security.SecurityMiddleware',
@@ -80,7 +68,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Database
+# --- МААЛЫМАТ БАЗАСЫ (DATABASE) ---
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -88,7 +76,10 @@ DATABASES = {
     }
 }
 
-# Password validation
+# --- КОЛДОНУУЧУНУН МОДЕЛИ ---
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# --- ПАРОЛЬ ВАЛИДАЦИЯСЫ ---
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -96,27 +87,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
+# --- ТИЛ ЖАНА УБАКЫТ ---
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Bishkek'
 USE_I18N = True
 USE_TZ = True
 
-
-# Static and Media files
+# --- СТАТИКА ЖАНА МЕДИА ---
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# --- МЕДИА ЖӨНДӨӨЛӨРҮ (Сүрөт жана Видеолор үчүн) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-# ===== REST FRAMEWORK =====
+# --- REST FRAMEWORK ---
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': (
@@ -132,50 +117,29 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-
-# ===== JWT =====
+# --- JWT ЖӨНДӨӨЛӨРҮ ---
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(
-        days=int(os.getenv('JWT_ACCESS_TOKEN_LIFETIME_DAYS', 1))
-    ),
-    'REFRESH_TOKEN_LIFETIME': timedelta(
-        days=int(os.getenv('JWT_REFRESH_TOKEN_LIFETIME_DAYS', 30))
-    ),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=int(os.getenv('JWT_ACCESS_TOKEN_LIFETIME_DAYS', 1))),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.getenv('JWT_REFRESH_TOKEN_LIFETIME_DAYS', 30))),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-}
-
-
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# ===== SWAGGER =====
+# --- SWAGGER (SPECTACULAR) ---
 SPECTACULAR_SETTINGS = {
     'TITLE': 'TRIDE API',
     'DESCRIPTION': 'TRIDE - велосипед тренировка аппликациясынын REST API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
-
     'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
-
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
         'persistAuthorization': True,
         'displayOperationId': True,
-        'displayRequestDuration': True,
-        'filter': True,
         'tryItOutEnabled': True,
-        'operationsSorter': 'alpha',
-        'tagsSorter': 'alpha',
         'docExpansion': 'list',
     },
-
-    'SECURITY': [
-        {
-            'bearerAuth': []
-        }
-    ],
     'APPEND_COMPONENTS': {
         "securitySchemes": {
             "bearerAuth": {
@@ -185,46 +149,28 @@ SPECTACULAR_SETTINGS = {
             }
         }
     },
+    'SECURITY': [{'bearerAuth': []}],
 }
 
-
-# ===== CORS =====
+# --- CORS ---
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
-    "accept",
-    "authorization",
-    "content-type",
-    "ngrok-skip-browser-warning",
-    "x-csrftoken",
-    "x-requested-with",
+    "accept", "authorization", "content-type", "x-csrftoken", "x-requested-with", "ngrok-skip-browser-warning",
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-
-AUTH_USER_MODEL = 'users.CustomUser'
-
-# ===== EMAIL (для отправки кода подтверждения) =====
+# --- EMAIL ЖӨНДӨӨЛӨРҮ (16 орундуу кодду колдонуу үчүн) ---
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'TRIDE <noreply@tride.com>')
 
-
-# ===== EMAIL =====
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'TRIDE <noreply@tride.com>')
-
+# --- ПРОКСИ ЖӨНДӨӨЛӨРҮ ---
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
