@@ -15,7 +15,11 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # --- ТИРКЕМЕЛЕР (INSTALLED APPS) ---
 INSTALLED_APPS = [
-    'jazzmin',  # Admin панель үчүн (башкалардан жогору болушу шарт)
+    'jazzmin',  # Сөзсүз эң башында болушу керек
+
+    # Сиздин өздүк колдонуучулар моделиңиз (Миграция катасын болтурбоо үчүн админден жогору койдук)
+    'users',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,14 +35,13 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'django_filters',
 
-    # Сиздин колдонмолор
-    'users',
+    # Долбоордун башка колдонмолору
     'schedule',
 ]
 
 # --- ОРТОНЧУ ПРОГРАММАЛАР (MIDDLEWARE) ---
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Башында болушу шарт
+    'corsheaders.middleware.CorsMiddleware',  # Эң башында болушу шарт
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -162,7 +165,7 @@ CORS_ALLOW_HEADERS = [
     "accept", "authorization", "content-type", "x-csrftoken", "x-requested-with", "ngrok-skip-browser-warning",
 ]
 
-# --- EMAIL ЖӨНДӨӨЛӨРҮ (16 орундуу кодду колдонуу үчүн) ---
+# --- EMAIL ЖӨНДӨӨЛӨРҮ ---
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
